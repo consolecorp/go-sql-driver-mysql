@@ -27,6 +27,7 @@ type mysqlStmt struct {
 type Stmt interface {
 	driver.Stmt
 	Columns() []string
+	ColumnTypeDatabaseTypeName(i int) string
 }
 
 func (stmt *mysqlStmt) Close() error {
@@ -53,6 +54,10 @@ func (stmt *mysqlStmt) Columns() ([]string) {
 		cols[i] = c.name
 	}
 	return cols
+}
+
+func (stmt *mysqlStmt) ColumnTypeDatabaseTypeName(i int) string {
+	return stmt.columns[i].typeDatabaseName()
 }
 
 func (stmt *mysqlStmt) ColumnConverter(idx int) driver.ValueConverter {

@@ -846,6 +846,25 @@ func (stmt *mysqlStmt) readPrepareResultPacket() (uint16, error) {
 		// Reserved [8 bit]
 
 		// Warning count [16 bit uint]
+		if (len(data) >= 12) {
+			_ = int(binary.LittleEndian.Uint16(data[10:12]))
+		}
+
+		if stmt.paramCount > 0 {
+			params, err := stmt.mc.readColumns(stmt.paramCount)
+			if err != nil {
+				return 0, err
+			}
+			stmt.params = params
+		}
+
+		if columnCount > 0 {
+			cols, err := stmt.mc.readColumns(int(columnCount))
+			if err != nil {
+				return 0, err
+			}
+			stmt.columns = cols
+		}
 
 		return columnCount, nil
 	}

@@ -179,19 +179,11 @@ func (mc *mysqlConn) Prepare(query string) (driver.Stmt, error) {
 	}
 
 	// Read Result
-	columnCount, err := stmt.readPrepareResultPacket()
-	if err == nil {
-		if stmt.paramCount > 0 {
-			if err = mc.readUntilEOF(); err != nil {
-				return nil, err
-			}
-		}
+	_, err = stmt.readPrepareResultPacket()
+	if err != nil {
+		return nil, err
 
-		if columnCount > 0 {
-			err = mc.readUntilEOF()
-		}
 	}
-
 	return stmt, err
 }
 

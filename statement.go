@@ -20,6 +20,13 @@ type mysqlStmt struct {
 	mc         *mysqlConn
 	id         uint32
 	paramCount int
+	params     []mysqlField
+	columns    []mysqlField
+}
+
+type Stmt interface {
+	driver.Stmt
+	Columns() []string
 }
 
 func (stmt *mysqlStmt) Close() error {
@@ -38,6 +45,14 @@ func (stmt *mysqlStmt) Close() error {
 
 func (stmt *mysqlStmt) NumInput() int {
 	return stmt.paramCount
+}
+
+func (stmt *mysqlStmt) Columns() ([]string) {
+	var cols = make([]string, len(stmt.columns))
+	for i, c := range stmt.columns {
+		cols[i] = c.name
+	}
+	return cols
 }
 
 func (stmt *mysqlStmt) ColumnConverter(idx int) driver.ValueConverter {

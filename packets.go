@@ -846,9 +846,6 @@ func (stmt *mysqlStmt) readPrepareResultPacket() (uint16, error) {
 		// Reserved [8 bit]
 
 		// Warning count [16 bit uint]
-		if (len(data) >= 12) {
-			_ = int(binary.LittleEndian.Uint16(data[10:12]))
-		}
 
 		if stmt.paramCount > 0 {
 			params, err := stmt.mc.readColumns(stmt.paramCount)
